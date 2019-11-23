@@ -1,7 +1,6 @@
 from PyPDF4 import PdfFileMerger
 import os
-from PyPDF4 import PdfFileReader
-from PyPDF4 import PdfFileWriter
+
 
 
 def merge_pdfs(file_paths, output='merged.pdf'):
@@ -25,7 +24,6 @@ if __name__ == '__main__':
     file_paths = sorted([os.path.abspath(file) for file in os.listdir() if '.pdf' in file])
 
 
-    #merge_pdfs(file_paths)
+    merge_pdfs(file_paths)
 
-    print(file_paths)
 
