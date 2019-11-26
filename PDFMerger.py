@@ -56,36 +56,40 @@ class Ui_Dialog(QObject):
 
     @pyqtSlot()
     def clearItemsSlot(self):
+        # no need to check for contents of listwidget or file_names, no crash happens if button is pressed
+        # and no PDFs are already attached.
         self.file_list_widget.clear()
         self.file_names.clear()
 
     @pyqtSlot()
     def removeItemSlot(self):
-        item_to_remove_index = self.file_list_widget.currentRow()
-        self.file_list_widget.takeItem(item_to_remove_index)
-        del self.file_names[item_to_remove_index]
-        print(self.file_names)
+        if len(self.file_names) > 0: # prevents crash if nothing in list
+            item_to_remove_index = self.file_list_widget.currentRow()
+            self.file_list_widget.takeItem(item_to_remove_index)
+            del self.file_names[item_to_remove_index]
 
     @pyqtSlot()
     def mergeDocSlot(self):
         output_file_name = 'merged.pdf' # default name for file output
 
-        options = QtWidgets.QFileDialog.Options()
-        options |= QtWidgets.QFileDialog.DontUseNativeDialog
-        output_file_name, _ = QtWidgets.QFileDialog.getSaveFileName(None, "Save File", "", "PDF File (*.pdf)", options=options)
+        if len(self.file_names) > 1: # no merging unless there are enough documents to merge
 
-        if output_file_name: #check to make sure there is a name
-            output_file_name = output_file_name + '.pdf' # user's file name won't include .pdf unless they type it in
+            options = QtWidgets.QFileDialog.Options()
+            options |= QtWidgets.QFileDialog.DontUseNativeDialog
+            output_file_name, _ = QtWidgets.QFileDialog.getSaveFileName(None, "Save File", "", "PDF File (*.pdf)", options=options)
 
-            pdf_merger = PdfFileMerger(open(output_file_name, "wb")) #create PDF merger object
+            if output_file_name: #check to make sure there is a name
+                output_file_name = output_file_name + '.pdf' # user's file name won't include .pdf unless they type it in
 
-            for i in range(len(self.file_names)):
-                pdf_merger.append(self.file_names[i]) #get everything from the file list
+                pdf_merger = PdfFileMerger(open(output_file_name, "wb")) #create PDF merger object
 
-            pdf_merger.write(output_file_name)
-            pdf_merger.close()
+                for i in range(len(self.file_names)):
+                    pdf_merger.append(self.file_names[i]) #get everything from the file list
 
-            success_message = QtWidgets.QMessageBox.information(None, "Files Merged", f"{output_file_name} has been successfully written!")
+                pdf_merger.write(output_file_name)
+                pdf_merger.close()
+
+                success_message = QtWidgets.QMessageBox.information(None, "Files Merged", f"{output_file_name} has been successfully written!")
 
 
     @pyqtSlot()
