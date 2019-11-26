@@ -1,8 +1,12 @@
 # PDFMerger
 
 Planned updates
-- Better error-handling; program currently crashes if no PDFs have been loaded and buttons are pressed that rely on there being PDFs available
+- Ability to drag and drop files into the list to add them
 - Distributable app version for MacOS (i.e. .app version)
+- Dark mode support for MacOS
+
+Version 2.1
+Solved crashing issue when clicking "Remove from List" if the list was empty
 
 Version 2.0
 First official GUI version that uses PyQT5. 
