@@ -1,9 +1,11 @@
 # PDFMerger
 
 Planned updates
-- Ability to drag and drop files into the list to add them
 - Distributable app version for MacOS (i.e. .app version)
 - Dark mode support for MacOS
+
+Version 2.2
+Added drag and drop ability 
 
 Version 2.1
 Solved crashing issue when clicking "Remove from List" if the list was empty
