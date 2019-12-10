@@ -4,6 +4,9 @@ Planned updates
 - Distributable app version for MacOS (i.e. .app version)
 - Dark mode support for MacOS
 
+Version 2.2.1
+Removed automatic sorting of PDFs into alphabetical/numerical order. MacOS alphabatizes along the following example: PDF1 -> PDF2 -> PDF11. Original sorting sorted this into PDF1->PDF11->PDF2. Users can now manually add files in the order they wish and achieve the same result if this is wanted, but default behavior will add files as they appear in Finder, which is a more common use-case.
+
 Version 2.2
 Added drag and drop ability 
 
