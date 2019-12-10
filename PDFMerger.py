@@ -111,7 +111,7 @@ class Ui_Dialog(QObject):
                                                               options=options)  # *.pdf limits selection to pdf files only
         if new_files:  # check to make sure files were selected
             # new_files is separate from file_names in case user browses multiple times before merging
-            file_names = sorted(file_names + new_files)
+            file_names = file_names + new_files
             self.file_list_widget.clear()  # clear to start fresh
             # add old files back as well as new files
             self.file_list_widget.addItems(file_names)
@@ -145,7 +145,6 @@ class ListDragWidget(QtWidgets.QListWidget):
                 if file.path().endswith('.pdf'): # make sure it is a PDF file
                     self.addItem(file.path())
                     file_names.append(file.path())
-                    file_names = sorted(file_names)
         else:
             super(ListDragWidget, self).dropEvent(event)
 
