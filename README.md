@@ -2,7 +2,6 @@
 
 Planned updates
 - Distributable app version for MacOS (i.e. .app version)
-- Dark mode support for MacOS
 
 Version 2.3
 - Dark mode added in MacOS
