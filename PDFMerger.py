@@ -3,8 +3,6 @@ from PyQt5.QtCore import QObject, pyqtSlot
 from PyPDF4 import PdfFileMerger
 import sys
 
-file_names = [] #global variable to hold file paths
-
 
 class Ui_Dialog(QObject):
     """Main UI, also contains slot functions for button actions"""
@@ -59,31 +57,39 @@ class Ui_Dialog(QObject):
 
     @pyqtSlot()
     def clearItemsSlot(self):
-        global file_names
-        # no need to check for contents of listwidget or file_names, no crash happens if button is pressed
-        # and no PDFs are already attached.
         self.file_list_widget.clear()
-        file_names.clear()
 
     @pyqtSlot()
     def removeItemSlot(self):
-        global file_names
-        if len(file_names) > 0:  # prevents crash if nothing in list
-            item_to_remove_index = self.file_list_widget.currentRow()
-            self.file_list_widget.takeItem(item_to_remove_index)
-            del file_names[item_to_remove_index]
+        if self.file_list_widget.count() > 0:  # prevents crash if nothing in list
+            self.file_list_widget.takeItem(self.file_list_widget.currentRow())
+
+    @pyqtSlot()
+    def browseSlot(self):
+        options = QtWidgets.QFileDialog.Options()
+        options |= QtWidgets.QFileDialog.DontUseNativeDialog
+        new_files, _ = QtWidgets.QFileDialog.getOpenFileNames(None, "Select Files to Merge", "", "PDF Files(*.pdf)",
+                                                              options=options)  # *.pdf limits selection to pdf files only
+        if new_files:  # check to make sure files were selected
+            # new_files is separate from file_names in case user browses multiple times before merging
+            for file_name in new_files:
+                self.file_list_widget.addItem(file_name)
 
     @pyqtSlot()
     def mergeDocSlot(self):
-        global file_names
         output_file_name = 'merged.pdf'  # default name for file output
 
-        if len(file_names) > 1:  # no merging unless there are enough documents to merge
+        if self.file_list_widget.count() > 1:  # no merging unless there are enough documents to merge
 
             options = QtWidgets.QFileDialog.Options()
             options |= QtWidgets.QFileDialog.DontUseNativeDialog
             output_file_name, _ = QtWidgets.QFileDialog.getSaveFileName(
-                None, "Save File", "", "PDF File (*.pdf)", options=options)
+                None, "Save File","merged", "PDF File (*.pdf)", options=options)
+
+            for i in range(self.file_list_widget.count()):
+                if output_file_name + ".pdf" == self.file_list_widget.item(i).text():
+                    error_message = QtWidgets.QMessageBox.critical(None, "Error!", "Error! Your file name is already in use!")
+                    return
 
             if output_file_name:  # check to make sure there is a name
                 # user's file name won't include .pdf unless they type it in
@@ -92,9 +98,9 @@ class Ui_Dialog(QObject):
                 # create PDF merger object
                 pdf_merger = PdfFileMerger(open(output_file_name, "wb"))
 
-                for i in range(len(file_names)):
+                for i in range(self.file_list_widget.count()):
                     # get everything from the file list
-                    pdf_merger.append(file_names[i])
+                    pdf_merger.append(self.file_list_widget.item(i).text())
 
                 pdf_merger.write(output_file_name)
                 pdf_merger.close()
@@ -102,19 +108,6 @@ class Ui_Dialog(QObject):
                 success_message = QtWidgets.QMessageBox.information(
                     None, "Files Merged", f"{output_file_name} has been successfully written!")
 
-    @pyqtSlot()
-    def browseSlot(self):
-        global file_names
-        options = QtWidgets.QFileDialog.Options()
-        options |= QtWidgets.QFileDialog.DontUseNativeDialog
-        new_files, _ = QtWidgets.QFileDialog.getOpenFileNames(None, "Select Files to Merge", "", "PDF Files(*.pdf)",
-                                                              options=options)  # *.pdf limits selection to pdf files only
-        if new_files:  # check to make sure files were selected
-            # new_files is separate from file_names in case user browses multiple times before merging
-            file_names = file_names + new_files
-            self.file_list_widget.clear()  # clear to start fresh
-            # add old files back as well as new files
-            self.file_list_widget.addItems(file_names)
 
     @pyqtSlot()
     def exitSlot(self):
@@ -144,7 +137,6 @@ class ListDragWidget(QtWidgets.QListWidget):
             for file in event.mimeData().urls():
                 if file.path().endswith('.pdf'): # make sure it is a PDF file
                     self.addItem(file.path())
-                    file_names.append(file.path())
         else:
             super(ListDragWidget, self).dropEvent(event)
 
