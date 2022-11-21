@@ -136,7 +136,7 @@ class ListDragWidget(QtWidgets.QListWidget):
         if event.mimeData().hasUrls():
             for file in event.mimeData().urls():
                 if file.path().endswith('.pdf'): # make sure it is a PDF file
-                    self.addItem(file.path())
+                    self.addItem(file.toLocalFile())
         else:
             super(ListDragWidget, self).dropEvent(event)
 
