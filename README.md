@@ -3,6 +3,9 @@
 Planned updates
 - Distributable app version for MacOS (i.e. .app version)
 
+Version 2.3.1
+- Changed method of adding files upon dropEvent, solving crashes on Windows and Linxu platforms
+
 Version 2.3
 - Dark mode added in MacOS
 - Fixed bug where app would crash if user attempted to name the merged file the same name as a file being merged (if both were in the same directory)
